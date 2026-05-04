@@ -105,14 +105,22 @@ startBtn.addEventListener("click", () => {
 
 // Export data
 exportBtn.addEventListener("click", () => {
-  const data = {
-    timestamp: Date.now(),
+const data = {
+  app: "scotoma-mapper",
+  version: "1.0",
+  timestamp: new Date().toISOString(),
+
+  test: {
+    eye: "unknown", // futuro: dx/sx selezionabile
+    distance_cm: null, // opzionale (input utente)
     screen: {
       width: canvas.width,
       height: canvas.height
-    },
-    points: points
-  };
+    }
+  },
+
+  points: points
+};
 
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json"
