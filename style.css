@@ -43,7 +43,7 @@ canvas {
   display: none;
   width: 100vw;
   height: 100vh;
-  cursor: crosshair;
+  cursor: none;
 }
 
 #controls {
