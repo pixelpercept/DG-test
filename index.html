@@ -3,42 +3,98 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scotoma Test</title>
+  <title>Scotoma Mapping Tool</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
+<!-- INTRO -->
 <div id="intro">
   <h1>Scotoma Mapping Tool</h1>
+
   <p>
     This experimental tool helps you map visual blind spots using dynamic noise.
-    Fix your gaze at the center and click where you perceive distortions or missing areas.
   </p>
 
+  <h3>Instructions</h3>
   <ul>
-    <li>Use one eye at a time</li>
-    <li>Sit at a consistent distance from the screen</li>
-    <li>Keep your gaze fixed at the center</li>
+    <li>Use one eye at a time (cover the other)</li>
+    <li>Keep your gaze fixed on the center cross</li>
+    <li>Click where you perceive distortions, missing or unstable areas</li>
+    <li>Maintain a consistent viewing distance</li>
   </ul>
+
+  <h3>What you may notice</h3>
+  <ul>
+    <li><b>Central blind spot</b>: missing or altered area near fixation</li>
+    <li><b>Distortions</b>: noise appears warped or unstable</li>
+    <li><b>Faded zones</b>: reduced contrast or flickering perception</li>
+  </ul>
+
+  <!-- OPTIONAL SETTINGS -->
+  <div style="margin-top:20px;">
+    <label>
+      Eye:
+      <select id="eyeSelect">
+        <option value="left">Left eye</option>
+        <option value="right">Right eye</option>
+      </select>
+    </label>
+
+    <br><br>
+
+    <label>
+      Distance (cm):
+      <input type="number" id="distanceInput" placeholder="e.g. 50">
+    </label>
+  </div>
+
+  <br>
 
   <button id="startBtn">Start Test</button>
 </div>
 
+<!-- CANVAS -->
 <canvas id="canvas"></canvas>
 
+<!-- CONTROLS -->
 <div id="controls">
   <button id="exportBtn">Export Data</button>
   <button id="resetBtn">Reset</button>
+  <button id="exitBtn">Exit</button>
 </div>
 
+<!-- INFO POST TEST -->
+<div id="info" style="display:none;">
+  <p>
+    You can export your results and repeat the test over time to track changes.
+  </p>
+
+  <p>
+    For consistency, use the same screen, distance, and test conditions.
+  </p>
+
+  <p>
+    You may share the exported file with your eye specialist if needed.
+  </p>
+
+  <p style="font-size:12px;color:#888;">
+    This is not a medical diagnostic tool.
+  </p>
+</div>
+
+<!-- FOOTER -->
 <footer>
   <p>
     If this tool is useful,
-    <a href="https://www.paypal.me/dariogiannessi" target="_blank">support the project</a>
+    <a href="https://paypal.me/tuonome" target="_blank">
+      support the project
+    </a>
   </p>
 </footer>
 
 <script src="script.js"></script>
+
 </body>
 </html>
