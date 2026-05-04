@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scotoma Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<div id="intro">
+  <h1>Scotoma Mapping Tool</h1>
+  <p>
+    This experimental tool helps you map visual blind spots using dynamic noise.
+    Fix your gaze at the center and click where you perceive distortions or missing areas.
+  </p>
+
+  <ul>
+    <li>Use one eye at a time</li>
+    <li>Sit at a consistent distance from the screen</li>
+    <li>Keep your gaze fixed at the center</li>
+  </ul>
+
+  <button id="startBtn">Start Test</button>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div id="controls">
+  <button id="exportBtn">Export Data</button>
+  <button id="resetBtn">Reset</button>
+</div>
+
+<footer>
+  <p>
+    If this tool is useful,
+    <a href="https://www.paypal.me/dariogiannessi" target="_blank">support the project</a>
+  </p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
