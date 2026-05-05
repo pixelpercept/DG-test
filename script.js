@@ -4,12 +4,18 @@ const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById("startBtn");
 const exportBtn = document.getElementById("exportBtn");
 const resetBtn = document.getElementById("resetBtn");
+const exitBtn = document.getElementById("exitBtn");
 
 const intro = document.getElementById("intro");
 const controls = document.getElementById("controls");
+const info = document.getElementById("info");
+
+const eyeSelect = document.getElementById("eyeSelect");
+const distanceInput = document.getElementById("distanceInput");
 
 let points = [];
 let mouse = { x: 0, y: 0 };
+let running = false;
 
 // Resize canvas
 function resizeCanvas() {
@@ -18,8 +24,10 @@ function resizeCanvas() {
 }
 window.addEventListener("resize", resizeCanvas);
 
-// Noise generator
+// Noise loop
 function drawNoise() {
+  if (!running) return;
+
   const imageData = ctx.createImageData(canvas.width, canvas.height);
   const buffer = imageData.data;
 
@@ -40,7 +48,7 @@ function drawNoise() {
   requestAnimationFrame(drawNoise);
 }
 
-// Draw fixation cross (center)
+// Fixation cross
 function drawFixationCross() {
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
@@ -56,7 +64,7 @@ function drawFixationCross() {
   ctx.stroke();
 }
 
-// Draw user points
+// Points
 function drawPoints() {
   ctx.fillStyle = "red";
   points.forEach(p => {
@@ -76,7 +84,7 @@ function drawCursor() {
   ctx.stroke();
 }
 
-// Mouse move tracking
+// Mouse tracking
 canvas.addEventListener("mousemove", (e) => {
   const rect = canvas.getBoundingClientRect();
   mouse.x = e.clientX - rect.left;
@@ -98,29 +106,31 @@ startBtn.addEventListener("click", () => {
   intro.style.display = "none";
   canvas.style.display = "block";
   controls.style.display = "block";
+  info.style.display = "block";
 
   resizeCanvas();
+  running = true;
   drawNoise();
 });
 
-// Export data
+// Export JSON
 exportBtn.addEventListener("click", () => {
-const data = {
-  app: "scotoma-mapper",
-  version: "1.0",
-  timestamp: new Date().toISOString(),
+  const data = {
+    app: "scotoma-mapper",
+    version: "1.0",
+    timestamp: new Date().toISOString(),
 
-  test: {
-    eye: "unknown", // futuro: dx/sx selezionabile
-    distance_cm: null, // opzionale (input utente)
-    screen: {
-      width: canvas.width,
-      height: canvas.height
-    }
-  },
+    test: {
+      eye: eyeSelect ? eyeSelect.value : "unknown",
+      distance_cm: distanceInput && distanceInput.value ? Number(distanceInput.value) : null,
+      screen: {
+        width: canvas.width,
+        height: canvas.height
+      }
+    },
 
-  points: points
-};
+    points: points
+  };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json"
@@ -137,4 +147,15 @@ const data = {
 // Reset points
 resetBtn.addEventListener("click", () => {
   points = [];
+});
+
+// Exit → ritorno intro (Opzione A)
+exitBtn.addEventListener("click", () => {
+  running = false;
+
+  canvas.style.display = "none";
+  controls.style.display = "none";
+  info.style.display = "none";
+
+  intro.style.display = "block";
 });
