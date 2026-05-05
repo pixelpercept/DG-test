@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const exportBtn = document.getElementById("exportBtn");
   const resetBtn = document.getElementById("resetBtn");
   const exitBtn = document.getElementById("exitBtn");
+  const pngBtn = document.getElementById("pngBtn");
 
   const intro = document.getElementById("intro");
   const controls = document.getElementById("controls");
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", resizeCanvas);
 
-  // Main loop
+  // ===== NOISE LOOP (ANIMATO) =====
   function drawNoise() {
     if (!running) return;
 
@@ -51,7 +52,31 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(drawNoise);
   }
 
-  // Fixation cross
+  // ===== HEATMAP =====
+  function drawHeatmap() {
+    ctx.globalCompositeOperation = "lighter";
+
+    points.forEach(p => {
+      const x = p.x * canvas.width;
+      const y = p.y * canvas.height;
+
+      const radius = 40;
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+
+      gradient.addColorStop(0, "rgba(255,0,0,0.6)");
+      gradient.addColorStop(0.5, "rgba(255,0,0,0.3)");
+      gradient.addColorStop(1, "rgba(255,0,0,0)");
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  // ===== FIXATION CROSS =====
   function drawFixationCross() {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -67,27 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.stroke();
   }
 
-  // Draw points
- function drawHeatmap() {
-  points.forEach(p => {
-    const x = p.x * canvas.width;
-    const y = p.y * canvas.height;
-
-    const radius = 40; // dimensione macchia
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-
-    gradient.addColorStop(0, "rgba(255,0,0,0.6)");
-    gradient.addColorStop(0.5, "rgba(255,0,0,0.3)");
-    gradient.addColorStop(1, "rgba(255,0,0,0)");
-
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-  });
-}
-
-  // Custom cursor
+  // ===== CURSOR =====
   function drawCursor() {
     ctx.strokeStyle = "lime";
     ctx.lineWidth = 2;
@@ -97,14 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.stroke();
   }
 
-  // Mouse move
+  // Mouse tracking
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
     mouse.y = e.clientY - rect.top;
   });
 
-  // Click to add point
+  // Click → add point
   canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
 
@@ -114,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     points.push({ x, y });
   });
 
-  // Start test
+  // ===== START =====
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       intro.style.display = "none";
@@ -128,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Export JSON
+  // ===== EXPORT JSON =====
   if (exportBtn) {
     exportBtn.addEventListener("click", () => {
 
@@ -162,17 +167,69 @@ document.addEventListener("DOMContentLoaded", () => {
       a.href = url;
       a.download = "scotoma-map.json";
       a.click();
+
+      // opzionale: esporta anche PNG
+      exportPNG();
     });
   }
 
-  // Reset
+  // ===== EXPORT PNG =====
+  function exportPNG() {
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+
+    // sfondo nero
+    tempCtx.fillStyle = "black";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // heatmap
+    points.forEach(p => {
+      const x = p.x * tempCanvas.width;
+      const y = p.y * tempCanvas.height;
+
+      const radius = 40;
+      const gradient = tempCtx.createRadialGradient(x, y, 0, x, y, radius);
+
+      gradient.addColorStop(0, "rgba(255,0,0,0.6)");
+      gradient.addColorStop(1, "rgba(255,0,0,0)");
+
+      tempCtx.fillStyle = gradient;
+      tempCtx.beginPath();
+      tempCtx.arc(x, y, radius, 0, Math.PI * 2);
+      tempCtx.fill();
+    });
+
+    // croce
+    const cx = tempCanvas.width / 2;
+    const cy = tempCanvas.height / 2;
+
+    tempCtx.strokeStyle = "yellow";
+    tempCtx.lineWidth = 2;
+
+    tempCtx.beginPath();
+    tempCtx.moveTo(cx - 10, cy);
+    tempCtx.lineTo(cx + 10, cy);
+    tempCtx.moveTo(cx, cy - 10);
+    tempCtx.lineTo(cx, cy + 10);
+    tempCtx.stroke();
+
+    const link = document.createElement("a");
+    link.download = `scotoma-${new Date().toISOString()}.png`;
+    link.href = tempCanvas.toDataURL("image/png");
+    link.click();
+  }
+
+  // ===== RESET =====
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       points = [];
     });
   }
 
-  // Exit → ritorno intro
+  // ===== EXIT =====
   if (exitBtn) {
     exitBtn.addEventListener("click", () => {
       running = false;
