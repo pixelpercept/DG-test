@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function drawNoise() {
   if (!running) return;
 
-  const scale = 6; // 👈 aumenta per grana più grossa (3–6 ideale)
+  const scale = 4; // 👈 aumenta per grana più grossa (3–6 ideale)
 
   const w = Math.floor(canvas.width / scale);
   const h = Math.floor(canvas.height / scale);
