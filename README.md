@@ -1,7 +1,7 @@
 # DG-test
 # Scotoma Mapping Tool
 
-Experimental browser-based tool to map visual blind spots (scotomas) using dynamic noise patterns.
+Experimental browser-based tool to map visual blind spots (scotomas) using dynamic noise patterns. Version 1.0 05/05/2026
 
 ## Why
 
