@@ -29,28 +29,44 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", resizeCanvas);
 
   // ===== NOISE LOOP (ANIMATO) =====
-  function drawNoise() {
-    if (!running) return;
+function drawNoise() {
+  if (!running) return;
 
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
-    const buffer = imageData.data;
+  const scale = 4; // 👈 aumenta per grana più grossa (3–6 ideale)
 
-    for (let i = 0; i < buffer.length; i += 4) {
-      const val = Math.random() * 255;
-      buffer[i] = val;
-      buffer[i + 1] = val;
-      buffer[i + 2] = val;
-      buffer[i + 3] = 255;
-    }
+  const w = Math.floor(canvas.width / scale);
+  const h = Math.floor(canvas.height / scale);
 
-    ctx.putImageData(imageData, 0, 0);
+  const imageData = ctx.createImageData(w, h);
+  const buffer = imageData.data;
 
-    drawHeatmap();
-    drawFixationCross();
-    drawCursor();
-
-    requestAnimationFrame(drawNoise);
+  for (let i = 0; i < buffer.length; i += 4) {
+    const val = Math.random() * 255;
+    buffer[i] = val;
+    buffer[i + 1] = val;
+    buffer[i + 2] = val;
+    buffer[i + 3] = 255;
   }
+
+  // canvas temporaneo piccolo
+  const tempCanvas = document.createElement("canvas");
+  const tempCtx = tempCanvas.getContext("2d");
+
+  tempCanvas.width = w;
+  tempCanvas.height = h;
+
+  tempCtx.putImageData(imageData, 0, 0);
+
+  // scala senza smoothing → blocchi visibili
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(tempCanvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
+
+  drawHeatmap();
+  drawFixationCross();
+  drawCursor();
+
+  requestAnimationFrame(drawNoise);
+}
 
   // ===== HEATMAP =====
   function drawHeatmap() {
