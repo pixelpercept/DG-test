@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function drawNoise() {
   if (!running) return;
 
-  const scale = 4; // 👈 aumenta per grana più grossa (3–6 ideale)
+  const scale = 5; // 👈 aumenta per grana più grossa (3–6 ideale)
 
   const w = Math.floor(canvas.width / scale);
   const h = Math.floor(canvas.height / scale);
@@ -76,7 +76,7 @@ function drawNoise() {
       const x = p.x * canvas.width;
       const y = p.y * canvas.height;
 
-      const radius = 40;
+      const radius = 30;
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
 
       gradient.addColorStop(0, "rgba(255,0,0,0.6)");
