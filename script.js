@@ -68,15 +68,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Draw points
-  function drawPoints() {
-    ctx.fillStyle = "red";
+ function drawHeatmap() {
+  points.forEach(p => {
+    const x = p.x * canvas.width;
+    const y = p.y * canvas.height;
 
-    points.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x * canvas.width, p.y * canvas.height, 5, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  }
+    const radius = 40; // dimensione macchia
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+
+    gradient.addColorStop(0, "rgba(255,0,0,0.6)");
+    gradient.addColorStop(0.5, "rgba(255,0,0,0.3)");
+    gradient.addColorStop(1, "rgba(255,0,0,0)");
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
 
   // Custom cursor
   function drawCursor() {
