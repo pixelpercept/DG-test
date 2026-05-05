@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ctx.putImageData(imageData, 0, 0);
 
-    drawPoints();
+    drawHeatmap();
     drawFixationCross();
     drawCursor();
 
