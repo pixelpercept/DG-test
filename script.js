@@ -60,7 +60,7 @@ function drawNoise() {
       const x = p.x * canvas.width;
       const y = p.y * canvas.height;
 
-      const radius = 38;
+      const radius = 40;
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
 
       gradient.addColorStop(0, "rgba(255,0,0,0.6)");
