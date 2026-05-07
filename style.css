@@ -84,6 +84,11 @@ footer {
   font-size: 13px !important;
 }
 
+#donate .donate-box {
+  max-height: 120px;
+  overflow: auto;
+}
+
 .donate-title {
   font-weight: bold;
   margin-bottom: 5px;
