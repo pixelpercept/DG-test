@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const exportBtn = document.getElementById("exportBtn");
   const resetBtn = document.getElementById("resetBtn");
   const exitBtn = document.getElementById("exitBtn");
-  const pngBtn = document.getElementById("pngBtn");
 
   const intro = document.getElementById("intro");
   const controls = document.getElementById("controls");
   const info = document.getElementById("info");
+  const donate = document.getElementById("donate");
 
   const eyeSelect = document.getElementById("eyeSelect");
   const distanceInput = document.getElementById("distanceInput");
@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouse = { x: 0, y: 0 };
   let running = false;
 
-  // Resize canvas
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -28,31 +27,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", resizeCanvas);
 
-  // ===== NOISE LOOP (ANIMATO) =====
-function drawNoise() {
-  if (!running) return;
+  function drawNoise() {
+    if (!running) return;
 
-  const imageData = ctx.createImageData(canvas.width, canvas.height);
-  const buffer = imageData.data;
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const buffer = imageData.data;
 
-  for (let i = 0; i < buffer.length; i += 4) {
-    const val = Math.random() * 255;
-    buffer[i] = val;
-    buffer[i + 1] = val;
-    buffer[i + 2] = val;
-    buffer[i + 3] = 255;
+    for (let i = 0; i < buffer.length; i += 4) {
+      const val = Math.random() * 255;
+      buffer[i] = val;
+      buffer[i + 1] = val;
+      buffer[i + 2] = val;
+      buffer[i + 3] = 255;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+
+    drawHeatmap();
+    drawFixationCross();
+    drawCursor();
+
+    requestAnimationFrame(drawNoise);
   }
 
-  ctx.putImageData(imageData, 0, 0);
-
-  drawHeatmap();
-  drawFixationCross();
-  drawCursor();
-
-  requestAnimationFrame(drawNoise);
-}
-
-  // ===== HEATMAP =====
   function drawHeatmap() {
     ctx.globalCompositeOperation = "lighter";
 
@@ -63,8 +60,8 @@ function drawNoise() {
       const radius = 20;
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
 
-      gradient.addColorStop(0, "rgba(255,0,0,0.6)");
-      gradient.addColorStop(0.5, "rgba(255,0,0,0.3)");
+      gradient.addColorStop(0, "rgba(255,0,0,0.7)");
+      gradient.addColorStop(0.3, "rgba(255,0,0,0.4)");
       gradient.addColorStop(1, "rgba(255,0,0,0)");
 
       ctx.fillStyle = gradient;
@@ -76,7 +73,6 @@ function drawNoise() {
     ctx.globalCompositeOperation = "source-over";
   }
 
-  // ===== FIXATION CROSS =====
   function drawFixationCross() {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -92,7 +88,6 @@ function drawNoise() {
     ctx.stroke();
   }
 
-  // ===== CURSOR =====
   function drawCursor() {
     ctx.strokeStyle = "lime";
     ctx.lineWidth = 2;
@@ -102,14 +97,12 @@ function drawNoise() {
     ctx.stroke();
   }
 
-  // Mouse tracking
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
     mouse.y = e.clientY - rect.top;
   });
 
-  // Click → add point
   canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
 
@@ -119,7 +112,6 @@ function drawNoise() {
     points.push({ x, y });
   });
 
-  // ===== START =====
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       intro.style.display = "none";
@@ -127,39 +119,29 @@ function drawNoise() {
       controls.style.display = "block";
       info.style.display = "block";
 
+      if (donate) donate.style.display = "none"; // 👈 nascondi durante test
+
       resizeCanvas();
       running = true;
       drawNoise();
     });
   }
 
-  // ===== EXPORT JSON =====
   if (exportBtn) {
     exportBtn.addEventListener("click", () => {
 
       const data = {
-        app: "scotoma-mapper",
-        version: "1.0",
         timestamp: new Date().toISOString(),
-
         test: {
           eye: eyeSelect ? eyeSelect.value : "unknown",
-          distance_cm: distanceInput && distanceInput.value
-            ? Number(distanceInput.value)
-            : null,
-          screen: {
-            width: canvas.width,
-            height: canvas.height
-          }
+          distance_cm: distanceInput ? distanceInput.value : null
         },
-
         points: points
       };
 
-      const blob = new Blob(
-        [JSON.stringify(data, null, 2)],
-        { type: "application/json" }
-      );
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json"
+      });
 
       const url = URL.createObjectURL(blob);
 
@@ -168,12 +150,12 @@ function drawNoise() {
       a.download = "scotoma-map.json";
       a.click();
 
-      // opzionale: esporta anche PNG
       exportPNG();
+
+      if (donate) donate.style.display = "flex"; // 👈 mostra dopo export
     });
   }
 
-  // ===== EXPORT PNG =====
   function exportPNG() {
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
@@ -181,19 +163,17 @@ function drawNoise() {
     tempCanvas.width = canvas.width;
     tempCanvas.height = canvas.height;
 
-    // sfondo nero
     tempCtx.fillStyle = "black";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-    // heatmap
     points.forEach(p => {
       const x = p.x * tempCanvas.width;
       const y = p.y * tempCanvas.height;
 
-      const radius = 40;
+      const radius = 20;
       const gradient = tempCtx.createRadialGradient(x, y, 0, x, y, radius);
 
-      gradient.addColorStop(0, "rgba(255,0,0,0.6)");
+      gradient.addColorStop(0, "rgba(255,0,0,0.7)");
       gradient.addColorStop(1, "rgba(255,0,0,0)");
 
       tempCtx.fillStyle = gradient;
@@ -202,34 +182,18 @@ function drawNoise() {
       tempCtx.fill();
     });
 
-    // croce
-    const cx = tempCanvas.width / 2;
-    const cy = tempCanvas.height / 2;
-
-    tempCtx.strokeStyle = "yellow";
-    tempCtx.lineWidth = 2;
-
-    tempCtx.beginPath();
-    tempCtx.moveTo(cx - 10, cy);
-    tempCtx.lineTo(cx + 10, cy);
-    tempCtx.moveTo(cx, cy - 10);
-    tempCtx.lineTo(cx, cy + 10);
-    tempCtx.stroke();
-
     const link = document.createElement("a");
-    link.download = `scotoma-${new Date().toISOString()}.png`;
+    link.download = "scotoma-map.png";
     link.href = tempCanvas.toDataURL("image/png");
     link.click();
   }
 
-  // ===== RESET =====
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       points = [];
     });
   }
 
-  // ===== EXIT =====
   if (exitBtn) {
     exitBtn.addEventListener("click", () => {
       running = false;
@@ -239,6 +203,8 @@ function drawNoise() {
       info.style.display = "none";
 
       intro.style.display = "block";
+
+      if (donate) donate.style.display = "none";
     });
   }
 
