@@ -82,15 +82,16 @@ canvas {
 }
 
 .donate-box {
-  background: #1c1c1c;
-  border: 1px solid #333;
-  padding: 12px 16px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  max-width: 400px;
-  width: 100%;
-  font-size: 13px;
+  background: rgba(0, 0, 0, 0.85) !important; /* 👈 sfondo visibile sempre */
+  border: 1px solid #444 !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  text-align: center !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+  max-width: 400px !important;
+  width: 100% !important;
+  font-size: 13px !important;
+  color: #fff !important; /* 👈 testo sempre leggibile */
 }
 
 .donate-btn {
