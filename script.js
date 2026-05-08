@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let mouse = { x: 0, y: 0 };
   let running = false;
 
+  // ===== CANVAS SIZE =====
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", resizeCanvas);
 
+  // ===== NOISE LOOP =====
   function drawNoise() {
     if (!running) return;
 
@@ -50,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(drawNoise);
   }
 
+  // ===== HEATMAP =====
   function drawHeatmap() {
     ctx.globalCompositeOperation = "lighter";
 
@@ -73,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.globalCompositeOperation = "source-over";
   }
 
+  // ===== FIXATION CROSS =====
   function drawFixationCross() {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -88,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.stroke();
   }
 
+  // ===== CURSOR =====
   function drawCursor() {
     ctx.strokeStyle = "lime";
     ctx.lineWidth = 2;
@@ -97,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.stroke();
   }
 
+  // ===== MOUSE =====
   canvas.addEventListener("mousemove", (e) => {
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
@@ -112,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     points.push({ x, y });
   });
 
+  // ===== START TEST =====
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       intro.style.display = "none";
@@ -119,7 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
       controls.style.display = "block";
       info.style.display = "block";
 
-      if (donate) donate.style.display = "none"; // 👈 nascondi durante test
+      // nasconde donate
+      if (donate) donate.classList.remove("show");
 
       resizeCanvas();
       running = true;
@@ -127,9 +135,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ===== EXPORT =====
   if (exportBtn) {
     exportBtn.addEventListener("click", () => {
 
+      // JSON
       const data = {
         timestamp: new Date().toISOString(),
         test: {
@@ -150,12 +160,15 @@ document.addEventListener("DOMContentLoaded", () => {
       a.download = "scotoma-map.json";
       a.click();
 
+      // PNG
       exportPNG();
 
-      if (donate) donate.style.display = "flex"; // 👈 mostra dopo export
+      // 👇 MOSTRA POPUP DONATE
+      if (donate) donate.classList.add("show");
     });
   }
 
+  // ===== EXPORT PNG =====
   function exportPNG() {
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
@@ -188,12 +201,14 @@ document.addEventListener("DOMContentLoaded", () => {
     link.click();
   }
 
+  // ===== RESET =====
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
       points = [];
     });
   }
 
+  // ===== EXIT =====
   if (exitBtn) {
     exitBtn.addEventListener("click", () => {
       running = false;
@@ -204,7 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       intro.style.display = "block";
 
-      if (donate) donate.style.display = "none";
+      // nasconde donate
+      if (donate) donate.classList.remove("show");
     });
   }
 
