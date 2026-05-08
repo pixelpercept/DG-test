@@ -43,7 +43,7 @@ button:hover {
   background: #1a5fc1;
 }
 
-/* ===== CANVAS (SEMPRE SOTTO) ===== */
+/* ===== CANVAS (BACKGROUND) ===== */
 canvas {
   display: none;
   position: fixed;
@@ -52,7 +52,17 @@ canvas {
   width: 100vw;
   height: 100vh;
   cursor: none;
-  z-index: 1; /* 👈 fondamentale */
+  z-index: 1;
+}
+
+/* ===== GENERIC OVERLAY PANEL (CHIAVE) ===== */
+.overlay {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
 }
 
 /* ===== CONTROLS ===== */
@@ -64,36 +74,55 @@ canvas {
   z-index: 1000;
 }
 
-/* ===== INFO ===== */
+#controls button {
+  margin: 5px;
+}
+
+/* ===== INFO (ISTRUZIONI) ===== */
 #info {
   position: fixed;
   bottom: 10px;
   left: 10px;
   right: 10px;
-  font-size: 12px;
-  color: #aaa;
+
+  font-size: 13px;
+
   display: none;
   z-index: 1000;
 }
 
-/* ===== DONATE CONTAINER ===== */
-#donate {
-  display: none; /* 👈 appare solo dopo export */
-  position: fixed;
-  bottom: 20px;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: center;
-  z-index: 99999; /* 👈 sopra tutto */
-  pointer-events: none; /* 👈 non blocca il test */
+/* applichiamo overlay */
+#info {
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.8);
 }
 
-/* ===== DONATE BOX (LEGGIBILE SU NOISE) ===== */
-.donate-box {
-  pointer-events: auto; /* 👈 cliccabile */
+/* ===== DONATE MICRO POPUP ===== */
+#donate {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  opacity: 0;
 
-  background: rgba(0, 0, 0, 0.95); /* 👈 contrasto forte */
+  transition: all 0.4s ease;
+
+  z-index: 9999;
+  pointer-events: none;
+}
+
+#donate.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.donate-box {
+  pointer-events: auto;
+
+  background: rgba(0, 0, 0, 0.95);
   border: 1px solid #555;
 
   padding: 14px 18px;
@@ -105,22 +134,11 @@ canvas {
   box-shadow: 0 8px 30px rgba(0,0,0,0.9);
 
   max-width: 420px;
-  width: 100%;
+  width: calc(100vw - 20px);
 
   font-size: 14px;
-  line-height: 1.4;
-
-  backdrop-filter: blur(6px); /* 👈 migliora leggibilità */
 }
 
-/* ===== TESTO DONATE ===== */
-.donate-box p {
-  margin: 0;
-  color: #fff;
-  font-weight: 500;
-}
-
-/* ===== BOTTONE DONATE ===== */
 .donate-btn {
   display: inline-block;
   margin-top: 10px;
@@ -134,25 +152,15 @@ canvas {
   font-weight: bold;
 }
 
-.donate-btn:hover {
-  background: #ffb84d;
-}
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
 
-/* ===== GRADIENT PER CONTRASTO (FONDO) ===== */
-#donate::before {
-  content: "";
-  position: absolute;
-  bottom: -20px;
-  left: 0;
-  right: 0;
-  height: 140px;
+  #info {
+    font-size: 12px;
+    padding: 10px;
+  }
 
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.8),
-    rgba(0,0,0,0.4),
-    transparent
-  );
-
-  z-index: -1;
+  .donate-box {
+    font-size: 13px;
+  }
 }
